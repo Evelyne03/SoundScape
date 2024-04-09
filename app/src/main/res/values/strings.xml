@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SoundScape</string>
+    <string name="previous">Previous</string>
+    <string name="play">Play</string>
+    <string name="next">Next</string>
+    <string name="song_length">Length: %1$d:%2$02d</string>
 </resources>
