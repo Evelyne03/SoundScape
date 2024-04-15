@@ -13,6 +13,5 @@ buildscript {
     dependencies {
         classpath("com.chaquo.python:gradle:15.0.1")
 
-
     }
 }

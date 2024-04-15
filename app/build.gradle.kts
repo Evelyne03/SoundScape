@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.chaquo.python")
+
 }
 
 android {
@@ -23,7 +24,11 @@ android {
             defaultConfig {
                 pip{
                     install("numpy")
+                  //  install("scipy")
                     install("tensorflow")
+                  //  install("numba")
+                    //install ("joblib==0.11.0")
+                   // install ("librosa")
 
                 }
             }
@@ -64,6 +69,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
     //tensorflow-lite
     runtimeOnly("org.tensorflow:tensorflow-lite:2.15.0")
 

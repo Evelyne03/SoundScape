@@ -1,5 +1,5 @@
 package com.example.soundscape
-
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // Initialize views
         soundProgressBar = findViewById(R.id.soundProgressBar)
         stopButton = findViewById(R.id.stopButton)
@@ -55,6 +54,12 @@ class MainActivity : AppCompatActivity() {
     private fun playSound(resId: Int, songName: String) {
         // Stop and release any existing mediaPlayer
         stopPlayback()
+
+        val intent = Intent(this, CurrentlyPlayingActivity::class.java).apply {
+            putExtra("SONG_NAME", songName)
+            putExtra("SONG_DURATION", mediaPlayer?.duration ?: 0)
+        }
+        startActivity(intent)
 
         mediaPlayer = MediaPlayer.create(this, resId).apply {
             setOnCompletionListener {
