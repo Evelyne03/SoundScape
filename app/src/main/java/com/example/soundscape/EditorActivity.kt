@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -59,11 +60,23 @@ class EditorActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            uri = data?.data!! // The URI of the selected music file
-            soundText.text = uri.toString()
-            Toast.makeText(this, "File selected: $uri", Toast.LENGTH_SHORT).show()
+            uri = data?.data!! // Keep the URI in the uri variable
+
+            uri?.let { selectedUri ->
+                val cursor = contentResolver.query(selectedUri, null, null, null, null)
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        // Get the column index of the MediaStore.Images.Media.DISPLAY_NAME
+                        val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        val fileName = it.getString(displayNameIndex)
+                        soundText.text = fileName  // Set the file name to the TextView
+                        Toast.makeText(this, "File selected: $fileName", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
+
 
     fun modifyPitch(view: View) {
         if (!::uri.isInitialized) {
