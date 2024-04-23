@@ -128,13 +128,7 @@ class EditorActivity : AppCompatActivity() {
             Toast.makeText(this, "Please select a file first", Toast.LENGTH_SHORT).show()
             return
         }
-        //if media player is working, stop it
-        if (mediaPlayer != null) {
-            mediaPlayer?.stop()
-            mediaPlayer?.release()
-            mediaPlayer = null
-            return
-        }
+
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(applicationContext, newUri)
@@ -143,6 +137,13 @@ class EditorActivity : AppCompatActivity() {
         }
     }
 
+    fun stopAudio(view: View) {
+        if (mediaPlayer != null) {
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
     fun decreasePitch(view: View) {
         pitchValue--
         if (pitchValue < -3) {
