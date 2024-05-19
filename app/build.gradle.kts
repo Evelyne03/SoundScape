@@ -70,6 +70,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation ("com.google.code.gson:gson:2.7")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+
     //tensorflow-lite
     runtimeOnly("org.tensorflow:tensorflow-lite:2.15.0")
 
@@ -79,4 +82,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     //implementation ("android.core:core:1.12.0")
+
+
 }
