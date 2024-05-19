@@ -138,6 +138,8 @@ def apply_changes():
 
 def apply_reverb(y, reverb_amount):
     try:
+        if reverb_amount == 0:
+            return y
         impulse_response = np.zeros(int(reverb_amount * len(y)))
         impulse_response[::reverb_amount] = 1
         y_reverb = fftconvolve(y, impulse_response, mode='full')[:len(y)]
@@ -145,6 +147,7 @@ def apply_reverb(y, reverb_amount):
     except Exception as e:
         logging.error("Error in apply_reverb: %s", e)
         raise e
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
