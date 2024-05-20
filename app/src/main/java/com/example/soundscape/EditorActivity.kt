@@ -115,18 +115,28 @@ class EditorActivity : AppCompatActivity() {
             soundText.text = getFileName(uri)
             newUri = Uri.EMPTY // Reset newUri when a new file is selected
 
+            // Release the existing MediaPlayer if it's playing
+            mediaPlayer?.let {
+                if (it.isPlaying) {
+                    it.stop()
+                }
+                it.release()
+            }
+            mediaPlayer = null
+
             // Get the duration of the selected audio file
-            val mediaPlayer = MediaPlayer().apply {
+            val tempMediaPlayer = MediaPlayer().apply {
                 setDataSource(applicationContext, uri)
                 prepare()
             }
-            totalDuration = mediaPlayer.duration
-            mediaPlayer.release()
+            totalDuration = tempMediaPlayer.duration
+            tempMediaPlayer.release()
             updateDuration(0, totalDuration)
 
             Toast.makeText(this, "File selected: ${getFileName(uri)}", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
 
@@ -332,51 +342,62 @@ class EditorActivity : AppCompatActivity() {
         })
     }
 
-    fun denoiseAudio(view: View, callback: (Uri) -> Unit) {
+    fun denoiseAudio(view: View) {
         if (!::uri.isInitialized) {
             Toast.makeText(this, "Please select a file first", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val inputStream = contentResolver.openInputStream(uri)
-        val tempFile = File.createTempFile("denoise", ".wav", cacheDir)
-        tempFile.outputStream().use { output ->
-            inputStream?.copyTo(output)
-        }
-
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("file", tempFile.name, tempFile.asRequestBody("audio/wav".toMediaType()))
-            .build()
-
-        val request = Request.Builder()
-            .url("http://192.168.19.1:5000/denoise_audio")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { Toast.makeText(applicationContext, "Error: Failed to connect to server", Toast.LENGTH_LONG).show() }
+        try {
+            val inputStream = contentResolver.openInputStream(uri)
+            val tempFile = File.createTempFile("denoise", ".wav", cacheDir)
+            tempFile.outputStream().use { output ->
+                inputStream?.copyTo(output)
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (it.isSuccessful) {
-                        val outputFile = File(getExternalFilesDir(null), "denoised_output.wav")
-                        outputFile.outputStream().use { fileOut ->
-                            response.body?.byteStream()?.copyTo(fileOut)
-                        }
-                        val denoisedUri = Uri.fromFile(outputFile)
-                        runOnUiThread {
-                            Toast.makeText(applicationContext, "Audio denoised and saved", Toast.LENGTH_SHORT).show()
-                            callback(denoisedUri)
-                        }
-                    } else {
-                        runOnUiThread { Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show() }
+            val requestBody = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", tempFile.name, tempFile.asRequestBody("audio/wav".toMediaType()))
+                .build()
+
+            val request = Request.Builder()
+                .url("http://192.168.19.1:5000/denoise_audio")
+                .post(requestBody)
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    runOnUiThread {
+                        Toast.makeText(applicationContext, "Error: Failed to connect to server", Toast.LENGTH_LONG).show()
+                        e.printStackTrace()
                     }
                 }
-            }
-        })
+
+                override fun onResponse(call: Call, response: Response) {
+                    response.use {
+                        if (it.isSuccessful) {
+                            val outputFile = File(getExternalFilesDir(null), "denoised_output.wav")
+                            outputFile.outputStream().use { fileOut ->
+                                response.body?.byteStream()?.copyTo(fileOut)
+                            }
+                            val denoisedUri = Uri.fromFile(outputFile)
+                            runOnUiThread {
+                                Toast.makeText(applicationContext, "Audio denoised and saved", Toast.LENGTH_SHORT).show()
+                                // Update the newUri with the denoised file URI
+                                newUri = denoisedUri
+                            }
+                        } else {
+                            runOnUiThread {
+                                Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+            })
+        } catch (e: Exception) {
+            Toast.makeText(this, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
+        }
     }
 
 
@@ -448,20 +469,25 @@ class EditorActivity : AppCompatActivity() {
     fun playAudio(view: View) {
         val audioUri = if (::newUri.isInitialized && newUri != Uri.EMPTY) newUri else originalUri
 
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer().apply {
-                setDataSource(applicationContext, audioUri)
-                prepare()
-                start()
+        // Release the existing MediaPlayer if it's playing a different audio
+        if (mediaPlayer != null) {
+            if (mediaPlayer!!.isPlaying) {
+                mediaPlayer?.stop()
             }
-        } else if (!mediaPlayer!!.isPlaying) {
-            mediaPlayer?.start()
+            mediaPlayer?.release()
+        }
+
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(applicationContext, audioUri)
+            prepare()
+            start()
         }
 
         seekBar.max = mediaPlayer!!.duration
         handler.post(updateSeekBar)
         updateDuration(mediaPlayer!!.currentPosition, mediaPlayer!!.duration)
     }
+
 
 
 
