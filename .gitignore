@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/src/main/python/__pycache__/reverb_script.cpython-312.pyc
+app/src/main/python/__pycache__/speed_script.cpython-312.pyc
