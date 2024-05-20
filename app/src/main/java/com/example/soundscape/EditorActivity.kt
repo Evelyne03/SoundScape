@@ -9,6 +9,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.*
+
 
 
 class EditorActivity : AppCompatActivity() {
@@ -77,6 +79,7 @@ class EditorActivity : AppCompatActivity() {
     }
 
 
+
     fun modifyPitch(view: View) {
         if (!::uri.isInitialized) {
             Toast.makeText(this, "Please select a file first", Toast.LENGTH_SHORT).show()
@@ -97,96 +100,6 @@ class EditorActivity : AppCompatActivity() {
 
         val request = Request.Builder()
             .url("http://192.168.19.1:5000/change_pitch")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { Toast.makeText(applicationContext, "Error: Failed to connect to server :(", Toast.LENGTH_LONG).show() }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (it.isSuccessful) {
-                        val outputFile = File(getExternalFilesDir(null), "modified_output.wav")
-                        outputFile.outputStream().use { fileOut ->
-                            response.body?.byteStream()?.copyTo(fileOut)
-                        }
-                        newUri = Uri.fromFile(outputFile)
-                        runOnUiThread { Toast.makeText(applicationContext, "File modified and saved", Toast.LENGTH_SHORT).show() }
-                    } else {
-                        runOnUiThread { Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show() }
-                    }
-                }
-            }
-        })
-    }
-
-    fun modifySpeed(view: View) {
-        if (!::uri.isInitialized) {
-            Toast.makeText(this, "Please select a file first", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val inputStream = contentResolver.openInputStream(uri)
-        val tempFile = File.createTempFile("prefix", "suffix", cacheDir) // Temporary file in cache directory
-        tempFile.outputStream().use { output ->
-            inputStream?.copyTo(output)
-        }
-
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("file", tempFile.name, tempFile.asRequestBody("audio/wav".toMediaType()))
-            .addFormDataPart("speed_change", speedValue.toString())
-            .build()
-
-        val request = Request.Builder()
-            .url("http://192.168.19.1:5000/change_speed")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { Toast.makeText(applicationContext, "Error: Failed to connect to server :(", Toast.LENGTH_LONG).show() }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (it.isSuccessful) {
-                        val outputFile = File(getExternalFilesDir(null), "modified_output.wav")
-                        outputFile.outputStream().use { fileOut ->
-                            response.body?.byteStream()?.copyTo(fileOut)
-                        }
-                        newUri = Uri.fromFile(outputFile)
-                        runOnUiThread { Toast.makeText(applicationContext, "File modified and saved", Toast.LENGTH_SHORT).show() }
-                    } else {
-                        runOnUiThread { Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show() }
-                    }
-                }
-            }
-        })
-    }
-
-    fun modifyReverb(view: View) {
-        if (!::uri.isInitialized) {
-            Toast.makeText(this, "Please select a file first", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val inputStream = contentResolver.openInputStream(uri)
-        val tempFile = File.createTempFile("prefix", "suffix", cacheDir) // Temporary file in cache directory
-        tempFile.outputStream().use { output ->
-            inputStream?.copyTo(output)
-        }
-
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("file", tempFile.name, tempFile.asRequestBody("audio/wav".toMediaType()))
-            .addFormDataPart("reverb_change", reverbValue.toString())
-            .build()
-
-        val request = Request.Builder()
-            .url("http://192.168.19.1:5000/change_reverb")
             .post(requestBody)
             .build()
 
