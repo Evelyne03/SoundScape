@@ -8,21 +8,15 @@
     android:gravity="center_horizontal"
     android:padding="16dp">
 
-    <Button
-        android:layout_marginTop="20dp"
-        android:id="@+id/fileButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select a file"
-        android:layout_marginBottom="20dp"
-        android:onClick="openFileManager"/>
+
 
     <ImageView
         android:id="@+id/albumCoverImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/album_cover"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/songNameTextView"
@@ -74,6 +68,15 @@
             android:textStyle="bold"
             android:textColor="#702963"/>
     </LinearLayout>
+
+    <Button
+        android:layout_marginTop="0dp"
+        android:id="@+id/fileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select a file"
+        android:layout_marginBottom="20dp"
+        android:onClick="openFileManager"/>
 
 
     <!-- Pitch Control Section -->

@@ -28,6 +28,7 @@ class EditorActivity : AppCompatActivity() {
     private var pitchValue: Int = 0
     private var speedValue: Float = 1.0f
     private var reverbValue: Int = 0
+    private var totalDuration: Int = 0
     private lateinit var lowPitch: Button
     private lateinit var highPitch: Button
     private lateinit var playButton: Button
@@ -96,6 +97,7 @@ class EditorActivity : AppCompatActivity() {
         }
     }
 
+
     fun openFileManager(view: View) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
@@ -111,9 +113,21 @@ class EditorActivity : AppCompatActivity() {
             originalUri = uri // Store the original URI
             soundText.text = getFileName(uri)
             newUri = Uri.EMPTY // Reset newUri when a new file is selected
+
+            // Get the duration of the selected audio file
+            val mediaPlayer = MediaPlayer().apply {
+                setDataSource(applicationContext, uri)
+                prepare()
+            }
+            totalDuration = mediaPlayer.duration
+            mediaPlayer.release()
+            updateDuration(0, totalDuration)
+
             Toast.makeText(this, "File selected: ${getFileName(uri)}", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private fun getFileName(uri: Uri): String {
         var fileName = "Unknown"
@@ -270,6 +284,12 @@ class EditorActivity : AppCompatActivity() {
             return
         }
 
+        // Check if any changes were made
+        if (pitchValue == 0 && speedValue == 1.0f && reverbValue == 0) {
+            Toast.makeText(this, "No changes to apply", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val inputStream = contentResolver.openInputStream(uri)
         val tempFile = File.createTempFile("prefix", "suffix", cacheDir) // Temporary file in cache directory
         tempFile.outputStream().use { output ->
@@ -358,11 +378,7 @@ class EditorActivity : AppCompatActivity() {
         })
     }
 
-    fun denoiseAndApplyEffects(view: View) {
-        denoiseAudio(view) { denoisedUri ->
-            applyEffects(denoisedUri)
-        }
-    }
+
 
     private fun applyEffects(uri: Uri) {
         val inputStream = contentResolver.openInputStream(uri)
@@ -431,27 +447,31 @@ class EditorActivity : AppCompatActivity() {
     fun playAudio(view: View) {
         val audioUri = if (::newUri.isInitialized && newUri != Uri.EMPTY) newUri else originalUri
 
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(applicationContext, audioUri)
-            prepare()
-            start()
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(applicationContext, audioUri)
+                prepare()
+                start()
+            }
+        } else if (!mediaPlayer!!.isPlaying) {
+            mediaPlayer?.start()
         }
+
         seekBar.max = mediaPlayer!!.duration
         handler.post(updateSeekBar)
         updateDuration(mediaPlayer!!.currentPosition, mediaPlayer!!.duration)
     }
 
+
+
+
     fun stopAudio(view: View) {
-        if (mediaPlayer != null) {
-            mediaPlayer?.stop()
-            mediaPlayer?.release()
-            mediaPlayer = null
-            seekBar.progress = 0
+        if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
+            mediaPlayer?.pause()
             handler.removeCallbacks(updateSeekBar)
-            updateDuration(0, 0)
         }
     }
+
 
     fun decreasePitch(view: View) {
         pitchValue--
@@ -513,4 +533,7 @@ class EditorActivity : AppCompatActivity() {
         listenedDurationTextView.text = formattedCurrent
         songDurationTextView.text = formattedDuration
     }
+
+
+
 }
