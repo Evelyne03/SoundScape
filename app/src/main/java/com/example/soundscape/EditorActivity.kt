@@ -133,9 +133,14 @@ class EditorActivity : AppCompatActivity() {
             tempMediaPlayer.release()
             updateDuration(0, totalDuration)
 
+            // Reset the SeekBar
+            seekBar.progress = 0
+            updateDuration(0, totalDuration)
+
             Toast.makeText(this, "File selected: ${getFileName(uri)}", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
 
@@ -469,28 +474,22 @@ class EditorActivity : AppCompatActivity() {
     fun playAudio(view: View) {
         val audioUri = if (::newUri.isInitialized && newUri != Uri.EMPTY) newUri else originalUri
 
-        // Release the existing MediaPlayer if it's playing a different audio
-        if (mediaPlayer != null) {
-            if (mediaPlayer!!.isPlaying) {
-                mediaPlayer?.stop()
+        // If MediaPlayer is null or not playing, create and start it
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(applicationContext, audioUri)
+                prepare()
+                start()
             }
-            mediaPlayer?.release()
+            seekBar.max = mediaPlayer!!.duration
+            handler.post(updateSeekBar)
+        } else if (!mediaPlayer!!.isPlaying) {
+            mediaPlayer?.start()
+            handler.post(updateSeekBar)
         }
 
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(applicationContext, audioUri)
-            prepare()
-            start()
-        }
-
-        seekBar.max = mediaPlayer!!.duration
-        handler.post(updateSeekBar)
         updateDuration(mediaPlayer!!.currentPosition, mediaPlayer!!.duration)
     }
-
-
-
-
 
     fun stopAudio(view: View) {
         if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
@@ -498,6 +497,7 @@ class EditorActivity : AppCompatActivity() {
             handler.removeCallbacks(updateSeekBar)
         }
     }
+
 
 
     fun decreasePitch(view: View) {
