@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSelectSoundDialog() {
         val fileNames = arrayOf("Song 1", "Song 2", "Song 3")
-        val fileResIds = arrayOf(R.raw.file1, R.raw.file2, R.raw.file3) // Ensure these resources exist
+        val fileResIds = arrayOf(R.raw.file1, R.raw.file2, R.raw.file3)
 
         AlertDialog.Builder(this)
             .setTitle("Select a Sound")
@@ -108,11 +108,11 @@ class MainActivity : AppCompatActivity() {
         songNameTextView.visibility = View.GONE
         songLengthTextView.visibility = View.GONE
         soundProgressBar.visibility = View.GONE
-        handler.removeCallbacksAndMessages(null) // Stop updating the progress bar
+        handler.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopPlayback() // Ensure media player is released
+        stopPlayback()
     }
 }
