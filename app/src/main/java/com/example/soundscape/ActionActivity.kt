@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class ActionActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,6 +21,12 @@ class ActionActivity : AppCompatActivity() {
         // Handle the custom back button
         findViewById<Button>(R.id.button).setOnClickListener {
             goToLoginActivity()
+        }
+
+        // Handle "Audio processing" button click
+        findViewById<Button>(R.id.audio_processing).setOnClickListener {
+            startActivity(Intent(this@ActionActivity, EditorActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
