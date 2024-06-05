@@ -51,13 +51,13 @@
         app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
     <TextView
-        android:id="@+id/surenameTextView"
+        android:id="@+id/surnameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:text="Surename"
+        android:text="Surname"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -65,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@+id/PersonNameText" />
 
     <EditText
-        android:id="@+id/PersonSurenameText"
+        android:id="@+id/PersonSurnameText"
         android:layout_width="0dp"
         android:layout_height="54dp"
         android:layout_marginStart="32dp"
@@ -73,7 +73,7 @@
         android:layout_marginEnd="32dp"
         android:background="@drawable/edittext_background"
         android:ems="10"
-        android:hint="Surename"
+        android:hint="Surname"
         android:inputType="textPersonName"
         android:padding="16dp"
         android:textColor="#5c5f72"
@@ -81,7 +81,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surenameTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/surnameTextView" />
 
     <TextView
         android:id="@+id/emailTextView"
@@ -95,7 +95,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PersonSurenameText" />
+        app:layout_constraintTop_toBottomOf="@+id/PersonSurnameText" />
 
     <EditText
         android:id="@+id/PersonEmailText"
@@ -130,57 +130,93 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/PersonEmailText" />
 
-    <EditText
-        android:id="@+id/PasswordText"
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="54dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/edittext_background"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:padding="16dp"
-        android:textColor="#5c5f72"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PasswordTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/PasswordTextView">
+
+        <EditText
+            android:id="@+id/PasswordText"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/edittext_background"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="48dp"
+            android:textColor="#5c5f72"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/passwordToggle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_eye"
+            android:contentDescription="Toggle Password Visibility"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/PasswordVerifyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="76dp"
         android:layout_marginEnd="32dp"
         android:text="Re-enter Password"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PasswordText" />
+        app:layout_constraintTop_toBottomOf="@+id/PasswordTextView" />
 
-    <EditText
-        android:id="@+id/RePasswordText"
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="54dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/edittext_background"
-        android:ems="10"
-        android:hint="Re-enter Password"
-        android:inputType="textPassword"
-        android:padding="16dp"
-        android:textColor="#5c5f72"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PasswordVerifyTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/PasswordVerifyTextView">
+
+        <EditText
+            android:id="@+id/RePasswordText"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:background="@drawable/edittext_background"
+            android:ems="10"
+            android:hint="Re-enter Password"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="48dp"
+            android:textColor="#5c5f72"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/rePasswordToggle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_eye"
+            android:contentDescription="Toggle Password Visibility"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/SignUpBtn"

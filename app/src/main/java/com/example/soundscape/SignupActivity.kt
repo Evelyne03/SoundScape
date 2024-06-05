@@ -1,8 +1,10 @@
 package com.example.soundscape
 
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
 class SignupActivity : AppCompatActivity() {
@@ -12,6 +14,9 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var passwordEdt: EditText
     private lateinit var rePasswordEdt: EditText
     private lateinit var signUpBtn: Button
+    private lateinit var passwordToggle: ImageView
+    private var isPasswordVisible: Boolean = false
+    private lateinit var rePasswordToggle: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,15 +24,20 @@ class SignupActivity : AppCompatActivity() {
 
         initView()
         setSignUpAction()
+        setupPasswordToggle()
+
     }
 
     private fun initView() {
         nameEdt = findViewById(R.id.PersonNameText)
-        surnameEdt = findViewById(R.id.PersonSurenameText)
+        surnameEdt = findViewById(R.id.PersonSurnameText)
         emailEdt = findViewById(R.id.PersonEmailText)
         passwordEdt = findViewById(R.id.PasswordText)
         rePasswordEdt = findViewById(R.id.RePasswordText)
         signUpBtn = findViewById(R.id.SignUpBtn)
+        passwordToggle = findViewById(R.id.passwordToggle)
+        rePasswordToggle = findViewById(R.id.rePasswordToggle)
+
     }
 
     private fun setSignUpAction() {
@@ -75,6 +85,41 @@ class SignupActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun setupPasswordToggle() {
+        passwordToggle.setOnClickListener {
+            togglePasswordVisibility()
+        }
+
+        rePasswordToggle.setOnClickListener {
+            toggleRePasswordVisibility()
+        }
+    }
+    private fun togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible
+        val passwordInputType = if (isPasswordVisible) {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        } else {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        passwordEdt.inputType = passwordInputType
+        passwordEdt.setSelection(passwordEdt.text.length)
+        passwordToggle.setImageResource(if (isPasswordVisible) R.drawable.ic_eye else R.drawable.ic_eye)
+    }
+
+
+    private fun toggleRePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible
+        val passwordInputType = if (isPasswordVisible) {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        } else {
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        }
+        rePasswordEdt.inputType = passwordInputType
+        rePasswordEdt.setSelection(rePasswordEdt.text.length)
+        rePasswordToggle.setImageResource(if (isPasswordVisible) R.drawable.ic_eye else R.drawable.ic_eye)
+    }
+
 
 
     private fun clearErrors() {
