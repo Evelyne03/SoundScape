@@ -32,6 +32,8 @@ class SignupActivity : AppCompatActivity() {
 
     private fun setSignUpAction() {
         signUpBtn.setOnClickListener {
+            val name = nameEdt.text.toString().trim()
+            val surname = surnameEdt.text.toString().trim()
             val email = emailEdt.text.toString().trim()
             val password = passwordEdt.text.toString()
             val rePassword = rePasswordEdt.text.toString()
@@ -39,23 +41,48 @@ class SignupActivity : AppCompatActivity() {
             val emailValid = isValidEmail(email)
             val passwordsValid = arePasswordsValid(password, rePassword)
 
-            if (emailValid && passwordsValid) {
-                emailEdt.error = null  // Clear any previous email errors
-                rePasswordEdt.error = null  // Clear any previous password errors
-                // Add further signup logic here
-            } else {
-                // Show appropriate error messages
-                if (!emailValid) {
-                    emailEdt.error = "Invalid email address"
-                    emailEdt.requestFocus()  // Show the error popup
-                }
-                if (!passwordsValid) {
-                    rePasswordEdt.error = "Passwords do not match"
-                    rePasswordEdt.requestFocus()  // Show the error popup
-                }
+            var allFieldsValid = true
 
+            if (name.isEmpty()) {
+                nameEdt.error = "Name is missing"
+                allFieldsValid = false
+            }
+            if (surname.isEmpty()) {
+                surnameEdt.error = "Surname is missing"
+                allFieldsValid = false
+            }
+            if (email.isEmpty()) {
+                emailEdt.error = "Email is missing"
+                allFieldsValid = false
+            } else if (!emailValid) {
+                emailEdt.error = "Invalid email address"
+                allFieldsValid = false
+            }
+            if (password.isEmpty()) {
+                passwordEdt.error = "Password is missing"
+                allFieldsValid = false
+            }
+            if (rePassword.isEmpty()) {
+                rePasswordEdt.error = "Re-entered password is missing"
+                allFieldsValid = false
+            } else if (!passwordsValid) {
+                rePasswordEdt.error = "Passwords do not match"
+                allFieldsValid = false
+            }
+
+            if (allFieldsValid) {
+                clearErrors()
             }
         }
+    }
+
+
+    private fun clearErrors() {
+        nameEdt.error = null
+        surnameEdt.error = null
+        emailEdt.error = null
+        passwordEdt.error = null
+        rePasswordEdt.error = null
     }
 
 

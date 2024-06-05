@@ -18,15 +18,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/background" />
 
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="276dp"
+        android:layout_height="193dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/logo" />
+
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="120dp"
         android:layout_marginEnd="32dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -60,18 +73,37 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/editTextTextPassword"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/edittext_background"
-            android:ems="10"
-            android:hint="Enter Your Password"
-            android:inputType="textPassword"
-            android:padding="16dp"
-            android:textColor="#5c5f72"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <EditText
+                android:id="@+id/editTextTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edittext_background"
+                android:ems="10"
+                android:hint="Enter Your Password"
+                android:inputType="textPassword"
+                android:padding="16dp"
+                android:textColor="#5c5f72"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/passwordToggle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_eye"
+                android:contentDescription="Toggle Password Visibility"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </FrameLayout>
+
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/loginBtn"
@@ -103,7 +135,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="-60dp"
+        android:layout_marginTop="-40dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -132,20 +164,42 @@
             app:srcCompat="@drawable/twitter" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayoutDivider"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-20dp"
-        android:text="Or Login With"
-        android:textColor="#2F3363"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:textStyle="bold"
-        android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
-        app:layout_goneMarginBottom="16dp" />
+        android:gravity="center">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#2F3363" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Or Login With"
+            android:textColor="#2F3363"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#2F3363" />
+
+    </LinearLayout>
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/SignUpBtn"

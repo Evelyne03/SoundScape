@@ -21,7 +21,12 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import android.widget.ImageView
+import okio.BufferedSink
+import okio.buffer
+import okio.source
 import kotlin.random.Random
+import kotlinx.coroutines.*
+
 
 
 class EditorActivity : AppCompatActivity() {
@@ -141,10 +146,6 @@ class EditorActivity : AppCompatActivity() {
         }
     }
 
-
-
-
-
     private fun getFileName(uri: Uri): String {
         var fileName = "Unknown"
         val cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
@@ -171,38 +172,24 @@ class EditorActivity : AppCompatActivity() {
             inputStream?.copyTo(output)
         }
 
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("file", tempFile.name, tempFile.asRequestBody("audio/wav".toMediaType()))
-            .addFormDataPart("pitch_change", pitchValue.toString())
-            .build()
+        val chunkSize = 1 * 1024 * 1024 // 1MB per chunk
+        val fileSize = tempFile.length()
+        val chunks = fileSize / chunkSize
 
-        val request = Request.Builder()
-            .url("http://192.168.19.1:5000/change_pitch")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { Toast.makeText(applicationContext, "Error: Failed to connect to server :(", Toast.LENGTH_LONG).show() }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (it.isSuccessful) {
-                        val outputFile = File(getExternalFilesDir(null), "modified_output.wav")
-                        outputFile.outputStream().use { fileOut ->
-                            response.body?.byteStream()?.copyTo(fileOut)
-                        }
-                        newUri = Uri.fromFile(outputFile)
-                        runOnUiThread { Toast.makeText(applicationContext, "File modified and saved", Toast.LENGTH_SHORT).show() }
-                    } else {
-                        runOnUiThread { Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show() }
-                    }
+        CoroutineScope(Dispatchers.IO).launch {
+            (0..chunks).map { i ->
+                async {
+                    val start = i * chunkSize
+                    val end = if (i == chunks) fileSize else (i + 1) * chunkSize
+                    uploadChunk(tempFile, start, end)
                 }
+            }.awaitAll()
+            withContext(Dispatchers.Main) {
+                processCompleteFile()
             }
-        })
+        }
     }
+
 
     fun modifySpeed(view: View) {
         if (!::uri.isInitialized) {
@@ -561,6 +548,76 @@ class EditorActivity : AppCompatActivity() {
         songDurationTextView.text = formattedDuration
     }
 
+
+
+    fun uploadChunk(file: File, start: Long, end: Long) {
+        val requestBody = object : RequestBody() {
+            override fun contentType() = "audio/wav".toMediaType()
+
+            override fun contentLength() = end - start
+
+            override fun writeTo(sink: BufferedSink) {
+                file.source().use { source ->
+                    source.buffer().apply {
+                        skip(start) // Skip to the start position
+                        var bytesRemaining = end - start
+                        while (bytesRemaining > 0) {
+                            val bytesRead = read(sink.buffer, bytesRemaining)
+                            if (bytesRead == -1L) break
+                            bytesRemaining -= bytesRead
+                        }
+                    }
+                }
+            }
+        }
+
+        val multipartBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", file.name, requestBody)
+            .addFormDataPart("chunk_start", start.toString())
+            .addFormDataPart("chunk_end", end.toString())
+            .addFormDataPart("pitch_change", pitchValue.toString())
+            .build()
+
+        val request = Request.Builder()
+            .url("http://192.168.19.1:5000/upload_chunk")
+            .post(multipartBody)
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw IOException("Failed to upload chunk: ${response.code}")
+            }
+        }
+    }
+
+    fun processCompleteFile() {
+        val request = Request.Builder()
+            .url("http://192.168.19.1:5000/process_complete_file")
+            .get()
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread { Toast.makeText(applicationContext, "Error: Failed to process complete file", Toast.LENGTH_LONG).show() }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (it.isSuccessful) {
+                        val outputFile = File(getExternalFilesDir(null), "modified_output.wav")
+                        outputFile.outputStream().use { fileOut ->
+                            response.body?.byteStream()?.copyTo(fileOut)
+                        }
+                        newUri = Uri.fromFile(outputFile)
+                        runOnUiThread { Toast.makeText(applicationContext, "File modified and saved", Toast.LENGTH_SHORT).show() }
+                    } else {
+                        runOnUiThread { Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show() }
+                    }
+                }
+            }
+        })
+    }
 
 
 }
