@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.chaquo.python")
+    id("com.google.gms.google-services")
 
 }
 
@@ -36,6 +37,11 @@ android {
             sourceSets { }
         }
 
+        buildFeatures {
+            viewBinding = true
+            compose = true
+        }
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             // On Apple silicon, you can omit x86_64.
@@ -56,6 +62,8 @@ android {
             )
         }
     }
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -99,6 +107,27 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation ("com.google.android.material:material:1.6.0")
+
+
+    implementation("org.tensorflow:tensorflow-lite:2.15.0")
+
+    implementation ("org.tensorflow:tensorflow-lite:2.10.0")
+    implementation ("org.tensorflow:tensorflow-lite-support:0.1.0")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    /*implementation("com.google.firebase:firebase-analytics")*/
+    implementation("com.google.firebase:firebase-auth"){
+    }
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
+
+
+   // implementation(files("libs/jvm-25.jar"))
+
     //tensorflow-lite
     runtimeOnly("org.tensorflow:tensorflow-lite:2.15.0")
 
@@ -106,6 +135,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
+
+
 
     //implementation ("android.core:core:1.12.0")
 

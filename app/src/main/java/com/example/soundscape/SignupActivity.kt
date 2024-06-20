@@ -5,7 +5,11 @@ import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.soundscape.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var nameEdt: EditText
@@ -15,8 +19,9 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var rePasswordEdt: EditText
     private lateinit var signUpBtn: Button
     private lateinit var passwordToggle: ImageView
-    private var isPasswordVisible: Boolean = false
     private lateinit var rePasswordToggle: ImageView
+    private lateinit var firebase: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,10 +30,12 @@ class SignupActivity : AppCompatActivity() {
         initView()
         setSignUpAction()
         setupPasswordToggle()
-
+        //setupBackButton()
     }
 
     private fun initView() {
+        firebase = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
         nameEdt = findViewById(R.id.PersonNameText)
         surnameEdt = findViewById(R.id.PersonSurnameText)
         emailEdt = findViewById(R.id.PersonEmailText)
@@ -37,7 +44,6 @@ class SignupActivity : AppCompatActivity() {
         signUpBtn = findViewById(R.id.SignUpBtn)
         passwordToggle = findViewById(R.id.passwordToggle)
         rePasswordToggle = findViewById(R.id.rePasswordToggle)
-
     }
 
     private fun setSignUpAction() {
@@ -82,45 +88,57 @@ class SignupActivity : AppCompatActivity() {
 
             if (allFieldsValid) {
                 clearErrors()
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val user = hashMapOf(
+                                "name" to name,
+                                "surname" to surname,
+                                "email" to email,
+                                "password" to password
+                            )
+                            firebase.collection("users").document(email).set(user)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "User created", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
+                                }
+                        } else {
+                            Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
+                        }
+                    }
             }
         }
     }
 
     private fun setupPasswordToggle() {
         passwordToggle.setOnClickListener {
-            togglePasswordVisibility()
+            togglePasswordVisibility(passwordEdt)
         }
 
         rePasswordToggle.setOnClickListener {
-            toggleRePasswordVisibility()
+            togglePasswordVisibility(rePasswordEdt)
         }
     }
-    private fun togglePasswordVisibility() {
-        isPasswordVisible = !isPasswordVisible
-        val passwordInputType = if (isPasswordVisible) {
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
+    private fun togglePasswordVisibility(editText: EditText) {
+        val isPasswordVisible = editText.inputType != InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        val inputType = if (isPasswordVisible) {
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
         } else {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         }
-        passwordEdt.inputType = passwordInputType
-        passwordEdt.setSelection(passwordEdt.text.length)
-        passwordToggle.setImageResource(if (isPasswordVisible) R.drawable.ic_eye else R.drawable.ic_eye)
-    }
-
-
-    private fun toggleRePasswordVisibility() {
-        isPasswordVisible = !isPasswordVisible
-        val passwordInputType = if (isPasswordVisible) {
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        editText.inputType = inputType
+        editText.setSelection(editText.text.length)
+        val toggleIcon = if (isPasswordVisible) R.drawable.ic_eye else R.drawable.ic_eye
+        if (editText == passwordEdt) {
+            passwordToggle.setImageResource(toggleIcon)
         } else {
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            rePasswordToggle.setImageResource(toggleIcon)
         }
-        rePasswordEdt.inputType = passwordInputType
-        rePasswordEdt.setSelection(rePasswordEdt.text.length)
-        rePasswordToggle.setImageResource(if (isPasswordVisible) R.drawable.ic_eye else R.drawable.ic_eye)
     }
-
-
 
     private fun clearErrors() {
         nameEdt.error = null
@@ -130,7 +148,6 @@ class SignupActivity : AppCompatActivity() {
         rePasswordEdt.error = null
     }
 
-
     private fun isValidEmail(email: String): Boolean {
         return email.contains("@") && email.contains(".")
     }
@@ -138,4 +155,5 @@ class SignupActivity : AppCompatActivity() {
     private fun arePasswordsValid(password: String, rePassword: String): Boolean {
         return password == rePassword
     }
+
 }

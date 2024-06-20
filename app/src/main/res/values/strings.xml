@@ -8,4 +8,11 @@
     <string name="back">Back</string>
     <string name="stop">Stop</string>
     <string name="title_activity_login">LoginActivity</string>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/button_color</item>
+        <item name="colorPrimaryDark">@color/button_color</item>
+        <item name="colorAccent">@color/button_color</item>
+    </style>
 </resources>

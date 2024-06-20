@@ -19,6 +19,24 @@
         android:theme="@style/Theme.SoundScape"
         tools:targetApi="31">
         <activity
+            android:name=".FavoriteSongsAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".FavoriteSongsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RelatedSongsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecommenderActivity"
+            android:exported="false" />
+        <activity
             android:name=".SignupActivity"
             android:exported="false" />
         <activity

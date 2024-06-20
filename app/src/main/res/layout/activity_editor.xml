@@ -3,13 +3,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditorActivity"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/background_photo_app"
+    tools:context=".EditorActivity">
 
-
-
+    <!-- Album Cover -->
     <ImageView
         android:id="@+id/albumCoverImageView"
         android:layout_width="100dp"
@@ -18,14 +18,17 @@
         android:layout_marginBottom="10dp"
         android:layout_marginTop="20dp"/>
 
+    <!-- Song Name -->
     <TextView
         android:id="@+id/songNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Song missing"
+        android:text="No selected song"
+        android:layout_marginStart="0dp"
         android:textSize="24sp"
         android:layout_marginBottom="10dp" />
 
+    <!-- Sound Progress Bar -->
     <SeekBar
         android:id="@+id/soundProgressBar"
         android:layout_width="300dp"
@@ -34,9 +37,9 @@
         android:thumbTint="#702963"
         android:progressTint="#702963"/>
 
-
+    <!-- Duration Labels -->
     <LinearLayout
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end"
@@ -67,19 +70,26 @@
             android:text="00:00"
             android:textStyle="bold"
             android:textColor="#702963"/>
+
+
     </LinearLayout>
 
+    <!-- Select File Button -->
     <Button
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-20dp"
         android:id="@+id/fileButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select a file"
+        android:text="Select file"
         android:layout_marginBottom="20dp"
-        android:onClick="openFileManager"/>
-
+        android:onClick="openFileManager"
+        android:backgroundTint="@color/purple_200"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
 
     <!-- Pitch Control Section -->
+    <!-- Decrease Pitch Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -93,26 +103,38 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="decreasePitch"
-            android:text="Decrease Pitch" />
+            android:text="Decrease Pitch"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
 
+        <!-- Pitch Value TextView -->
         <TextView
             android:id="@+id/pitchValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="+0"
-            android:textAlignment="center" />
+            android:text="0"
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
+        <!-- Increase Pitch Button -->
         <Button
             android:id="@+id/increasePitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="increasePitch"
-            android:text="Increase Pitch" />
+            android:text="Increase Pitch"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <!-- Speed Control Section -->
+    <!-- Decrease Speed Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -126,26 +148,38 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="decreaseSpeed"
-            android:text="Decrease Speed" />
+            android:text="Decrease Speed"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
 
+        <!-- Speed Value TextView -->
         <TextView
             android:id="@+id/speedValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1.0x"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
+        <!-- Increase Speed Button -->
         <Button
             android:id="@+id/increaseSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="increaseSpeed"
-            android:text="Increase Speed" />
+            android:text="Increase Speed"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <!-- Reverb Control Section -->
+    <!-- Decrease Reverb Button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,75 +193,117 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="decreaseReverb"
-            android:text="Decrease Reverb" />
+            android:text="Decrease Reverb"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
 
+        <!-- Reverb Value TextView -->
         <TextView
             android:id="@+id/reverbValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
+        <!-- Increase Reverb Button -->
         <Button
             android:id="@+id/increaseReverb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="increaseReverb"
-            android:text="Increase Reverb" />
+            android:text="Increase Reverb"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
     </LinearLayout>
 
+    <!-- Denoise Button -->
     <Button
         android:id="@+id/denoiseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Denoise"
         android:onClick="denoiseAudio"
-        android:layout_marginBottom="5dp"/>
-    <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/applyButton"
-        android:text="Apply Changes"
-        android:onClick="applyChanges"
-        android:layout_marginBottom="5dp"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/discardButton"
-        android:text="Discard Changes"
-        android:onClick="discardChanges"
-        android:layout_marginBottom="5dp"/>
-    </LinearLayout>
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/purple_200"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"/>
 
+
+    <!-- Apply and Discard Buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
+
+        <!-- Apply Changes Button -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/applyButton"
+            android:text="Apply Changes"
+            android:onClick="applyChanges"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginRight="10dp"/>
+
+        <!-- Discard Changes Button -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/discardButton"
+            android:text="Discard Changes"
+            android:onClick="discardChanges"
+            android:layout_marginBottom="5dp"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="10dp"> <!-- Adjusted margin top for spacing -->
 
+        <!-- Play Button -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/playButton"
             android:text="Play"
             android:onClick="playAudio"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
+        <!-- Stop Button -->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stopButton"
             android:text="Stop"
-            android:onClick="stopAudio"/>
+            android:onClick="stopAudio"
+            android:backgroundTint="@color/purple_200"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
     </LinearLayout>
-
 
 </LinearLayout>

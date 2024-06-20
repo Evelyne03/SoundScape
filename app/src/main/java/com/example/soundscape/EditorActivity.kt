@@ -51,6 +51,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var seekBar: SeekBar
     private lateinit var listenedDurationTextView: TextView
     private lateinit var songDurationTextView: TextView
+    private lateinit var songNameTextView: TextView
     private var mediaPlayer: MediaPlayer? = null
     private val client = OkHttpClient.Builder()
         .connectTimeout(20, TimeUnit.SECONDS)
@@ -77,7 +78,16 @@ class EditorActivity : AppCompatActivity() {
         seekBar = findViewById(R.id.soundProgressBar)
         listenedDurationTextView = findViewById(R.id.listenedDurationTextView)
         songDurationTextView = findViewById(R.id.songDurationTextView)
+        songNameTextView = findViewById(R.id.songNameTextView)
         handler = Handler()
+
+        updateSongNameGravity("No selected song")
+
+        // Example method to update song name and gravity dynamically
+        fun updateSongNameAndGravity(newSongName: String) {
+            songNameTextView.text = newSongName
+            updateSongNameGravity(newSongName)
+        }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -92,6 +102,15 @@ class EditorActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
+
+    private fun updateSongNameGravity(songName: String) {
+        if (songName.length > 10) { // Adjust the length threshold as needed
+            songNameTextView.gravity = android.view.Gravity.CENTER
+        } else {
+            songNameTextView.gravity = android.view.Gravity.START
+        }
+    }
+
 
     private val updateSeekBar: Runnable = object : Runnable {
         override fun run() {

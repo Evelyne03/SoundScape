@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="414dp"
+        android:layout_height="621dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,13 +22,13 @@
         android:id="@+id/imageView4"
         android:layout_width="276dp"
         android:layout_height="193dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/logo_photo" />
 
     <LinearLayout
         android:id="@+id/linearLayout4"
@@ -117,15 +117,16 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!--<TextView
+        <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="10dp"
             android:text="Forgot Password?"
+            android:onClick="forgotPassword"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:textSize="16sp" />-->
+            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -178,6 +179,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:background="#2F3363" />
 
@@ -188,13 +190,15 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:text="Or Login With"
-            android:textColor="#2F3363"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/purple_200"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:background="#2F3363" />
 

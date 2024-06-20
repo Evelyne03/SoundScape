@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.text.InputType
+import android.view.View
+import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class LoginActivity : AppCompatActivity() {
@@ -16,6 +20,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var passEdt: EditText
     private lateinit var loginBtn: Button
     private lateinit var signupBtn: Button
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firebase: FirebaseFirestore
 
 
     private lateinit var passwordToggle: ImageView
@@ -26,7 +32,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
-
         initView()
         setVariable()
         signup()
@@ -65,9 +70,41 @@ class LoginActivity : AppCompatActivity() {
                 userEdt.error = null
                 if (password.isNotEmpty()) {
                     passEdt.error = null
-                    startActivity(Intent(this@LoginActivity, ActionActivity::class.java))
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                    finish()
+
+
+                    auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
+                                //update the password in document
+
+                                firebase.collection("users").whereEqualTo("email", email).get()
+                                    .addOnSuccessListener { documents ->
+                                        for (document in documents) {
+                                            val id = document.id
+                                            val user = hashMapOf(
+                                                "password" to password
+                                            )
+                                            firebase.collection("users").document(id).update(user as Map<String, Any>)
+                                        }
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        Toast.makeText(this, "Failed to update password", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                startActivity(Intent(this@LoginActivity, ActionActivity::class.java))
+                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                                finish()
+                            } else {
+                                Toast.makeText(baseContext, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show()
+                                passEdt.requestFocus()
+                            }
+                        }
+
+
+                    //startActivity(Intent(this@LoginActivity, ActionActivity::class.java))
+                    //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                   // finish()
                 } else {
                     passEdt.error = "Password cannot be empty"
                     passEdt.requestFocus()
@@ -77,6 +114,7 @@ class LoginActivity : AppCompatActivity() {
                 userEdt.requestFocus()
             }
         }
+
     }
 
 
@@ -88,18 +126,48 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signup() {
         signupBtn.setOnClickListener {
-            startActivity(Intent(this@LoginActivity, SignupActivity::class.java))
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-            finish()
         }
     }
 
     private fun initView() {
+        auth = FirebaseAuth.getInstance()
+        firebase = FirebaseFirestore.getInstance()
+
+        //testing
+
+        //if(auth.currentUser != null){ auth.signOut() }
+
+        if (auth.currentUser != null) {
+            startActivity(Intent(this, ActionActivity::class.java))
+           finish()
+        }
+
+
+
         userEdt = findViewById(R.id.editTextTextPersonName)
         passEdt = findViewById(R.id.editTextTextPassword)
         loginBtn = findViewById(R.id.loginBtn)
         signupBtn = findViewById(R.id.SignUpBtn)
         passwordToggle = findViewById(R.id.passwordToggle)
+    }
+
+    fun forgotPassword(view: View) {
+        // use firebase auth
+        val email = userEdt.text.toString()
+        if (email.isNotEmpty()) {
+            auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "Email sent", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        } else {
+            userEdt.error = "Email cannot be empty"
+            userEdt.requestFocus()
+        }
     }
 
 

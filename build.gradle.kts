@@ -3,15 +3,19 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     id("com.chaquo.python") version "15.0.1" apply false
+    id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
 buildscript {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
     dependencies {
         classpath("com.chaquo.python:gradle:15.0.1")
+        classpath(libs.google.services)
+
 
     }
 }
