@@ -84,7 +84,7 @@ class RelatedSongsActivity : AppCompatActivity() {
         artistNameTextView.text = currentSong.artist
 
         favoriteButton.setOnCheckedChangeListener(null)
-        favoriteButton.isChecked = currentSong.isFavorited
+        favoriteButton.isChecked = isSongInFavorites(currentSong)
 
         favoriteButton.setOnCheckedChangeListener { _, isChecked ->
             songs[currentSongIndex].isFavorited = isChecked
@@ -98,6 +98,15 @@ class RelatedSongsActivity : AppCompatActivity() {
         }
     }
 
+    private fun isSongInFavorites(song: Recommendation): Boolean {
+        val sharedPreferences = getSharedPreferences("favorites", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val type = object : TypeToken<MutableList<Recommendation>>() {}.type
+
+        val favorites: MutableList<Recommendation> = gson.fromJson(sharedPreferences.getString("favoriteSongs", ""), type) ?: mutableListOf()
+        return favorites.any { it.song == song.song && it.artist == song.artist }
+    }
+
     private fun addSongToFavorites(song: Recommendation) {
         val sharedPreferences = getSharedPreferences("favorites", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -105,6 +114,13 @@ class RelatedSongsActivity : AppCompatActivity() {
         val type = object : TypeToken<MutableList<Recommendation>>() {}.type
 
         val favorites: MutableList<Recommendation> = gson.fromJson(sharedPreferences.getString("favoriteSongs", ""), type) ?: mutableListOf()
+
+        // Check if the song is already in the favorites list
+        if (favorites.any { it.song == song.song && it.artist == song.artist }) {
+            Toast.makeText(this, "Song is already in favorites", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         favorites.add(song)
         editor.putString("favoriteSongs", gson.toJson(favorites))
         editor.apply()

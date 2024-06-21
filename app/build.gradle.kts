@@ -130,6 +130,8 @@ dependencies {
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
     implementation ("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
 
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
 
    // implementation(files("libs/jvm-25.jar"))
 
