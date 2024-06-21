@@ -1,19 +1,13 @@
 package com.example.soundscape
 
-
 import android.content.Context
 import android.graphics.Color
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.soundscape.R
-import com.example.soundscape.Song
 
-class FavoriteSongsAdapter(private val context: Context, private val songList: List<Song>) : RecyclerView.Adapter<FavoriteSongsAdapter.ViewHolder>() {
+class FavoriteSongsAdapter(private val context: Context, private val songList: List<Recommendation>) : RecyclerView.Adapter<FavoriteSongsAdapter.ViewHolder>() {
 
     inner class ViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
 
@@ -44,12 +38,6 @@ class FavoriteSongsAdapter(private val context: Context, private val songList: L
         artistName.setTextColor(Color.GRAY)
         layout.addView(artistName)
 
-        val releaseYear = TextView(context)
-        releaseYear.layoutParams = params
-        releaseYear.textSize = 14f
-        releaseYear.setTextColor(Color.LTGRAY)
-        layout.addView(releaseYear)
-
         return ViewHolder(layout)
     }
 
@@ -57,9 +45,8 @@ class FavoriteSongsAdapter(private val context: Context, private val songList: L
         val song = songList[position]
         val layout = holder.layout
 
-        (layout.getChildAt(0) as TextView).text = song.title
-        (layout.getChildAt(1) as TextView).text = song.artistName
-        //(layout.getChildAt(2) as TextView).text = song.year ?: ""
+        (layout.getChildAt(0) as TextView).text = song.song
+        (layout.getChildAt(1) as TextView).text = song.artist
     }
 
     override fun getItemCount(): Int {

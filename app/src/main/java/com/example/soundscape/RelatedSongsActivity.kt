@@ -1,5 +1,6 @@
 package com.example.soundscape
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,8 +9,8 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
-import com.example.soundscape.Recommendation
-import java.util.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class RelatedSongsActivity : AppCompatActivity() {
 
@@ -27,7 +28,6 @@ class RelatedSongsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.related_songs_activity)
 
-        // Initialize views
         songNameTextView = findViewById(R.id.songName)
         artistNameTextView = findViewById(R.id.artistName)
         prevButton = findViewById(R.id.prevButton)
@@ -35,7 +35,6 @@ class RelatedSongsActivity : AppCompatActivity() {
         favoriteButton = findViewById(R.id.favoriteButton)
         youtubeButton = findViewById(R.id.youtubeButton)
 
-        // Retrieve recommended songs from intent extras
         songs = intent.getParcelableArrayListExtra("recommendedSongs") ?: ArrayList()
 
         if (songs.isNotEmpty()) {
@@ -58,8 +57,10 @@ class RelatedSongsActivity : AppCompatActivity() {
             favoriteButton.setOnCheckedChangeListener { _, isChecked ->
                 songs[currentSongIndex].isFavorited = isChecked
                 if (isChecked) {
+                    addSongToFavorites(songs[currentSongIndex])
                     Toast.makeText(this, "Song added to favorites", Toast.LENGTH_SHORT).show()
                 } else {
+                    removeSongFromFavorites(songs[currentSongIndex])
                     Toast.makeText(this, "Song removed from favorites", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -82,18 +83,42 @@ class RelatedSongsActivity : AppCompatActivity() {
         songNameTextView.text = currentSong.song
         artistNameTextView.text = currentSong.artist
 
-        // Remove listener before changing state to prevent it from firing due to programmatic change
         favoriteButton.setOnCheckedChangeListener(null)
         favoriteButton.isChecked = currentSong.isFavorited
 
-        // Re-add listener after changing state
         favoriteButton.setOnCheckedChangeListener { _, isChecked ->
             songs[currentSongIndex].isFavorited = isChecked
             if (isChecked) {
+                addSongToFavorites(songs[currentSongIndex])
                 Toast.makeText(this, "Song added to favorites", Toast.LENGTH_SHORT).show()
             } else {
+                removeSongFromFavorites(songs[currentSongIndex])
                 Toast.makeText(this, "Song removed from favorites", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun addSongToFavorites(song: Recommendation) {
+        val sharedPreferences = getSharedPreferences("favorites", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val type = object : TypeToken<MutableList<Recommendation>>() {}.type
+
+        val favorites: MutableList<Recommendation> = gson.fromJson(sharedPreferences.getString("favoriteSongs", ""), type) ?: mutableListOf()
+        favorites.add(song)
+        editor.putString("favoriteSongs", gson.toJson(favorites))
+        editor.apply()
+    }
+
+    private fun removeSongFromFavorites(song: Recommendation) {
+        val sharedPreferences = getSharedPreferences("favorites", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val type = object : TypeToken<MutableList<Recommendation>>() {}.type
+
+        val favorites: MutableList<Recommendation> = gson.fromJson(sharedPreferences.getString("favoriteSongs", ""), type) ?: mutableListOf()
+        favorites.removeIf { it.song == song.song && it.artist == song.artist }
+        editor.putString("favoriteSongs", gson.toJson(favorites))
+        editor.apply()
     }
 }
