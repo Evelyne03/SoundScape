@@ -3,7 +3,11 @@ package com.example.soundscape
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Recommendation(val song: String, val artist: String, var isFavorited: Boolean ): Parcelable {
+data class Recommendation(
+    val song: String,
+    val artist: String,
+    var isFavorited: Boolean,
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
         parcel.readString().toString(),
