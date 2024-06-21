@@ -11,8 +11,14 @@ import androidx.core.view.WindowInsetsCompat
 import android.text.InputType
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.example.soundscape.loadCsv
+import com.example.soundscape.Utils.songList
 
 
 class LoginActivity : AppCompatActivity() {
@@ -32,9 +38,14 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
+        loadSongs()
+
         initView()
+
         setVariable()
+
         signup()
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -58,6 +69,14 @@ class LoginActivity : AppCompatActivity() {
         }
         passEdt.setSelection(passEdt.text.length)
         passwordToggle.setImageResource(if (isPasswordVisible) R.drawable.ic_eye else R.drawable.ic_eye)
+    }
+
+    private fun loadSongs() {
+        lifecycleScope.launch {
+            songList = withContext(Dispatchers.IO) {
+                loadCsv(this@LoginActivity)
+            }
+        }
     }
 
 

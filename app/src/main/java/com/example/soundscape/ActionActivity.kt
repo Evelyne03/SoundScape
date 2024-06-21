@@ -22,7 +22,7 @@ class ActionActivity : AppCompatActivity() {
         setContentView(R.layout.action_activity)
         auth = FirebaseAuth.getInstance()
 
-        findViewById<Button>(R.id.button3).setOnClickListener {
+        findViewById<Button>(R.id.viewFavoritesButton).setOnClickListener {
             favoriteSongs()
         }
 

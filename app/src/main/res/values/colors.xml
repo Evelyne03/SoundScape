@@ -13,4 +13,6 @@
     <color name="secondary_text">#666666</color>
     <color name="button_color">#6200EE</color>
     <color name="button_text">#FFFFFF</color>
+    <color name="light_pink">#FFB6C1</color>
+    <color name="light_blue">#97CEF7</color>
 </resources>

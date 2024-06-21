@@ -18,6 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SoundScape"
         tools:targetApi="31">
+        <service
+            android:name=".ApiService"
+            android:enabled="true"
+            android:exported="false"></service>
+
         <activity
             android:name=".FavoriteSongsAdapter"
             android:exported="false" />

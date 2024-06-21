@@ -1,7 +1,9 @@
 package com.example.soundscape
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soundscape.databinding.ItemSongBinding
 
@@ -22,7 +24,12 @@ class SongAdapter(private val songs: List<Song>, private val itemClickListener: 
         holder.binding.title.text = song.title
         holder.binding.artistName.text = song.artistName
 
-        holder.itemView.isSelected = selectedPosition == position
+        // Highlight the selected item
+        val lightBlue = ContextCompat.getColor(holder.itemView.context, R.color.light_blue)
+        holder.itemView.setBackgroundColor(
+            if (selectedPosition == position) lightBlue
+            else Color.TRANSPARENT
+        )
 
         holder.itemView.setOnClickListener {
             val previousPosition = selectedPosition
@@ -43,6 +50,7 @@ class SongAdapter(private val songs: List<Song>, private val itemClickListener: 
         } else {
             emptyList()
         }
+        selectedPosition = RecyclerView.NO_POSITION // Clear selection when filtering
         notifyDataSetChanged()
     }
 

@@ -59,7 +59,7 @@ class FavoriteSongsAdapter(private val context: Context, private val songList: L
 
         (layout.getChildAt(0) as TextView).text = song.title
         (layout.getChildAt(1) as TextView).text = song.artistName
-        (layout.getChildAt(2) as TextView).text = song.year ?: ""
+        //(layout.getChildAt(2) as TextView).text = song.year ?: ""
     }
 
     override fun getItemCount(): Int {

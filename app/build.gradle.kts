@@ -83,6 +83,10 @@ android {
         }
     }
 
+    dexOptions {
+        javaMaxHeapSize = "4g"
+    }
+
 }
 
 dependencies {
@@ -138,6 +142,11 @@ dependencies {
 
 
 
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+    implementation ("com.google.android.material:material:1.4.0")
+    implementation("androidx.compose.ui:ui:1.0.0")
 
 
     //implementation ("android.core:core:1.12.0")
