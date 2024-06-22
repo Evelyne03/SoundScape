@@ -303,7 +303,20 @@
             android:backgroundTint="@color/purple_200"
             android:textColor="#ffffff"
             android:textSize="18sp"
+            android:layout_marginRight="20dp"
             android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:onClick="saveModifiedSong"
+            android:backgroundTint="@color/purple_200"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+
     </LinearLayout>
 
 </LinearLayout>

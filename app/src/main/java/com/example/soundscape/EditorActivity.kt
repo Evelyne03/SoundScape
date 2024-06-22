@@ -2,10 +2,12 @@ package com.example.soundscape
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.provider.OpenableColumns
 import android.view.View
@@ -21,15 +23,21 @@ import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import android.widget.ImageView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import okio.BufferedSink
 import okio.buffer
 import okio.source
 import kotlin.random.Random
 import kotlinx.coroutines.*
+import android.Manifest
+
 
 
 
 class EditorActivity : AppCompatActivity() {
+    private val WRITE_EXTERNAL_STORAGE_REQUEST = 101
+
 
     private var pitchValue: Int = 0
     private var speedValue: Float = 1.0f
@@ -344,7 +352,7 @@ class EditorActivity : AppCompatActivity() {
                             response.body?.byteStream()?.copyTo(fileOut)
                         }
                         newUri = Uri.fromFile(outputFile)
-                        runOnUiThread { Toast.makeText(applicationContext, "File modified and saved", Toast.LENGTH_SHORT).show() }
+                        runOnUiThread { Toast.makeText(applicationContext, "File modified", Toast.LENGTH_SHORT).show() }
                     } else {
                         runOnUiThread { Toast.makeText(applicationContext, "Server error: ${response.code}", Toast.LENGTH_LONG).show() }
                     }
@@ -352,6 +360,69 @@ class EditorActivity : AppCompatActivity() {
             }
         })
     }
+
+
+    fun saveModifiedSong(view: View) {
+        if (!::newUri.isInitialized || newUri == Uri.EMPTY) {
+            Toast.makeText(this, "No modified file to save", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val modifiedFile = File(newUri.path!!)
+        val originalFileName = getFileName(originalUri)
+        val modifiedFileName = "${originalFileName}_modified.wav" // Adjust file name as needed
+
+        // Check if external storage is available for writing
+        if (isExternalStorageWritable()) {
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val saveFile = File(downloadsDir, modifiedFileName)
+
+            try {
+                modifiedFile.copyTo(saveFile, overwrite = true)
+                Toast.makeText(this, "File saved as $modifiedFileName", Toast.LENGTH_SHORT).show()
+            } catch (e: IOException) {
+                Toast.makeText(this, "Error saving file: ${e.message}", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
+            }
+        } else {
+            Toast.makeText(this, "External storage not writable", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Check if external storage is available for writing
+    private fun isExternalStorageWritable(): Boolean {
+        val state = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED == state
+    }
+
+    private fun checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_EXTERNAL_STORAGE_REQUEST)
+        } else {
+            // Permission has already been granted
+            // Continue with your operations...
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            WRITE_EXTERNAL_STORAGE_REQUEST -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                    // Continue with your operations...
+                } else {
+                    // Permission denied
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+            // Handle other permissions if needed
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
 
     fun denoiseAudio(view: View) {
         if (!::uri.isInitialized) {
@@ -640,3 +711,5 @@ class EditorActivity : AppCompatActivity() {
 
 
 }
+
+
