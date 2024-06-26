@@ -13,13 +13,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.soundscape.loadCsv
 import com.example.soundscape.Utils.songList
-
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var userEdt: EditText
@@ -29,11 +29,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firebase: FirebaseFirestore
 
-
     private lateinit var passwordToggle: ImageView
     private var isPasswordVisible: Boolean = false
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,11 +38,8 @@ class LoginActivity : AppCompatActivity() {
         loadSongs()
 
         initView()
-
         setVariable()
-
         signup()
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -57,8 +51,6 @@ class LoginActivity : AppCompatActivity() {
             togglePasswordVisibility()
         }
     }
-
-
 
     private fun togglePasswordVisibility() {
         isPasswordVisible = !isPasswordVisible
@@ -79,69 +71,74 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setVariable() {
         loginBtn.setOnClickListener {
             val email = userEdt.text.toString()
             val password = passEdt.text.toString()
 
-            if (isValidEmail(email)) {
-                userEdt.error = null
-                if (password.isNotEmpty()) {
-                    passEdt.error = null
-
-
-                    auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this) { task ->
-                            if (task.isSuccessful) {
-                                //update the password in document
-
-                                firebase.collection("users").whereEqualTo("email", email).get()
-                                    .addOnSuccessListener { documents ->
-                                        for (document in documents) {
-                                            val id = document.id
-                                            val user = hashMapOf(
-                                                "password" to password
-                                            )
-                                            firebase.collection("users").document(id).update(user as Map<String, Any>)
-                                        }
-                                    }
-                                    .addOnFailureListener { exception ->
-                                        Toast.makeText(this, "Failed to update password", Toast.LENGTH_SHORT).show()
-                                    }
-
-                                startActivity(Intent(this@LoginActivity, ActionActivity::class.java))
-                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                                finish()
-                            } else {
-                                Toast.makeText(baseContext, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show()
-                                passEdt.requestFocus()
-                            }
-                        }
-
-
-                    //startActivity(Intent(this@LoginActivity, ActionActivity::class.java))
-                    //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                   // finish()
-                } else {
-                    passEdt.error = "Password cannot be empty"
-                    passEdt.requestFocus()
-                }
-            } else {
-                userEdt.error = "Invalid email address"
+            if (email.isEmpty()) {
+                userEdt.error = "Email is missing"
                 userEdt.requestFocus()
+                return@setOnClickListener
             }
+
+            if (!isValidEmail(email)) {
+                userEdt.error = "Invalid email format"
+                userEdt.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.isEmpty()) {
+                passEdt.error = "Password is missing"
+                passEdt.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                passEdt.error = "Password must be at least 6 characters"
+                passEdt.requestFocus()
+                return@setOnClickListener
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        //update the password in document
+                        firebase.collection("users").whereEqualTo("email", email).get()
+                            .addOnSuccessListener { documents ->
+                                for (document in documents) {
+                                    val id = document.id
+                                    val user = hashMapOf(
+                                        "password" to password
+                                    )
+                                    firebase.collection("users").document(id).update(user as Map<String, Any>)
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Toast.makeText(this, "Failed to update password", Toast.LENGTH_SHORT).show()
+                            }
+
+                        startActivity(Intent(this@LoginActivity, ActionActivity::class.java))
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                        finish()
+                    } else {
+                        // Display an error message based on the exception
+                        val exception = task.exception
+                        val errorMessage = when (exception?.localizedMessage) {
+                            "There is no user record corresponding to this identifier. The user may have been deleted." -> "No account found with this email."
+                            "The password is invalid or the user does not have a password." -> "Incorrect password."
+                            else -> "Authentication failed. Please try again."
+                        }
+                        Toast.makeText(baseContext, errorMessage, Toast.LENGTH_SHORT).show()
+                        passEdt.requestFocus()
+                    }
+                }
         }
-
     }
-
 
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
-
-
 
     private fun signup() {
         signupBtn.setOnClickListener {
@@ -155,16 +152,10 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firebase = FirebaseFirestore.getInstance()
 
-        //testing
-
-        //if(auth.currentUser != null){ auth.signOut() }
-
         if (auth.currentUser != null) {
             startActivity(Intent(this, ActionActivity::class.java))
-           finish()
+            finish()
         }
-
-
 
         userEdt = findViewById(R.id.editTextTextPersonName)
         passEdt = findViewById(R.id.editTextTextPassword)
@@ -174,13 +165,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun forgotPassword(view: View) {
-        // use firebase auth
         val email = userEdt.text.toString()
         if (email.isNotEmpty()) {
             auth.sendPasswordResetEmail(email)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Email sent", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to send email", Toast.LENGTH_SHORT).show()
                     }
                 }
         } else {
@@ -188,6 +180,4 @@ class LoginActivity : AppCompatActivity() {
             userEdt.requestFocus()
         }
     }
-
-
 }

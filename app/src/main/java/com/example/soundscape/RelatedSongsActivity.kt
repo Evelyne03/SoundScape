@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
@@ -19,7 +20,7 @@ class RelatedSongsActivity : AppCompatActivity() {
     private lateinit var prevButton: Button
     private lateinit var nextButton: Button
     private lateinit var favoriteButton: ToggleButton
-    private lateinit var youtubeButton: Button
+    private lateinit var youtubeButton: ImageView
 
     private lateinit var songs: ArrayList<Recommendation>
     private var currentSongIndex = 0

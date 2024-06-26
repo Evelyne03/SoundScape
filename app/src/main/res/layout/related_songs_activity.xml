@@ -13,13 +13,12 @@
         android:id="@+id/songImage"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:src="@drawable/album_cover"
+        android:layout_marginTop="150dp"
         android:contentDescription="@string/album_cover"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/album_cover"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="0dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/songName"
@@ -33,7 +32,9 @@
         app:layout_constraintTop_toBottomOf="@+id/songImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"/>
 
     <TextView
         android:id="@+id/artistName"
@@ -46,7 +47,9 @@
         app:layout_constraintTop_toBottomOf="@+id/songName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"/>
 
     <ToggleButton
         android:id="@+id/favoriteButton"
@@ -62,44 +65,39 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/prevButton"
-        android:layout_width="120dp"
-        android:layout_height="68dp"
-        android:paddingLeft="10dp"
-        android:paddingEnd="10dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text="Previous Song"
-        app:layout_constraintTop_toTopOf="@+id/songImage"
-        app:layout_constraintBottom_toBottomOf="@+id/songImage"
-        app:layout_constraintEnd_toStartOf="@+id/songImage"
-        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/favoriteButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/nextButton"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="32dp"
         android:backgroundTint="@color/purple_200"
         android:textColor="@color/button_text"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/nextButton"
-        android:layout_width="120dp"
-        android:layout_height="68dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:text="Next Song"
-        app:layout_constraintTop_toTopOf="@+id/songImage"
-        app:layout_constraintBottom_toBottomOf="@+id/songImage"
-        app:layout_constraintStart_toEndOf="@+id/songImage"
-        android:layout_marginStart="10dp"
-        android:backgroundTint="@color/purple_200"
-        android:textColor="@color/button_text"/>
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/youtubeButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Watch on YouTube"
+        android:text="Next Song"
         app:layout_constraintTop_toBottomOf="@+id/favoriteButton"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/prevButton"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="32dp"
         android:backgroundTint="@color/purple_200"
         android:textColor="@color/button_text"/>
 
+    <ImageView
+        android:id="@+id/youtubeButton"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nextButton"
+        app:srcCompat="@drawable/youtube_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

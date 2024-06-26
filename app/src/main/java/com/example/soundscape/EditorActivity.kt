@@ -464,7 +464,7 @@ class EditorActivity : AppCompatActivity() {
                             }
                             val denoisedUri = Uri.fromFile(outputFile)
                             runOnUiThread {
-                                Toast.makeText(applicationContext, "Audio denoised and saved", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(applicationContext, "Audio denoised", Toast.LENGTH_SHORT).show()
                                 // Update the newUri with the denoised file URI
                                 newUri = denoisedUri
                             }

@@ -77,6 +77,9 @@ class SignupActivity : AppCompatActivity() {
             if (password.isEmpty()) {
                 passwordEdt.error = "Password is missing"
                 allFieldsValid = false
+            } else if (password.length < 6) {
+                passwordEdt.error = "Password must be at least 6 characters"
+                allFieldsValid = false
             }
             if (rePassword.isEmpty()) {
                 rePasswordEdt.error = "Re-entered password is missing"
@@ -106,7 +109,12 @@ class SignupActivity : AppCompatActivity() {
                                     Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
                                 }
                         } else {
-                            Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
+                            val exception = task.exception
+                            if (exception != null && exception.message?.contains("email address is already in use") == true) {
+                                emailEdt.error = "The email is already used"
+                            } else {
+                                Toast.makeText(this, "Failed to create user", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
             }
@@ -155,5 +163,4 @@ class SignupActivity : AppCompatActivity() {
     private fun arePasswordsValid(password: String, rePassword: String): Boolean {
         return password == rePassword
     }
-
 }
